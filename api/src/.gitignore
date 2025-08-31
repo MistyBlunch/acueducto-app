@@ -1,0 +1,12 @@
+# Compiled JavaScript files
+*.js
+*.js.map
+*.d.ts
+
+# Build artifacts
+dist/
+build/
+
+# Cache files
+.cache/
+*.tsbuildinfo

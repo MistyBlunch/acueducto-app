@@ -1,0 +1,8 @@
+# Compiled application layer files
+*.js
+*.js.map
+*.d.ts
+
+# Generated DTOs
+generated-*.dto.ts
+auto-*.dto.ts

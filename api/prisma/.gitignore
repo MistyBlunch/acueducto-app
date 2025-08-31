@@ -1,0 +1,19 @@
+# Prisma generated files
+generated/
+
+# Migration files (keep only in version control)
+# Uncomment if you want to ignore all migrations
+# migrations/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment specific schemas
+schema.dev.prisma
+schema.test.prisma
+schema.prod.prisma
+
+# Prisma Studio
+.prisma-studio/

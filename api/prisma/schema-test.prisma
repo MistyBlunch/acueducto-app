@@ -1,0 +1,24 @@
+// Test schema using SQLite in-memory database
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/test-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file::memory:?cache=shared"
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  title        String
+  brand        String
+  description  String
+  priceCents   Int
+  currency     String   @default("USD")
+  stock        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("products")
+}

@@ -1,0 +1,11 @@
+# Generated type files
+generated-*.ts
+auto-*.ts
+*.generated.d.ts
+
+# API generated types
+api-generated.ts
+schema-generated.ts
+
+# Build artifacts
+*.types.js

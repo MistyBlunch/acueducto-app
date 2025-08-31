@@ -1,0 +1,19 @@
+# Script outputs
+*.out
+*.err
+
+# Temporary script files
+temp_*
+tmp_*
+
+# Script logs
+*.script.log
+
+# Backup files created by scripts
+*.backup
+*.bak
+
+# Environment specific scripts
+*-local.*
+*-dev.*
+*-prod.*

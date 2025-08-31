@@ -1,0 +1,16 @@
+# Environment specific init scripts
+*-dev.sql
+*-test.sql
+*-prod.sql
+*-local.sql
+
+# Generated init scripts
+generated-*.sql
+
+# Backup scripts
+*.sql.bak
+*.sql.backup
+
+# Temporary scripts
+temp-*.sql
+tmp-*.sql

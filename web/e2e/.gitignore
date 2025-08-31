@@ -1,0 +1,19 @@
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Screenshots and videos
+screenshots/
+videos/
+
+# E2E test artifacts
+*.har
+*.zip
+
+# Test data
+test-data/
+fixtures/data/
+
+# Browser downloads
+downloads/

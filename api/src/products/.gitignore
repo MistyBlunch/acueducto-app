@@ -1,0 +1,7 @@
+# Compiled product module files
+*.js
+*.js.map
+*.d.ts
+
+# Generated module files
+generated-*.module.ts

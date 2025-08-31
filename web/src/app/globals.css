@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme - Lovable inspired */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 216 85% 50%; /* Acueducto primary #1a4ce0 */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 216 75% 60%; /* Acueducto secondary */
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 258 90% 66%;
+    --radius: 1rem; /* Larger radius for Lovable style */
+  }
+
+  .dark {
+    /* Dark theme - Lovable inspired */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 216 85% 50%; /* Same Acueducto primary */
+    --primary-foreground: 240 10% 3.9%;
+    --secondary: 216 75% 60%; /* Same Acueducto secondary */
+    --secondary-foreground: 240 10% 3.9%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 258 90% 66%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-md;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer components {
+  /* Product card animations */
+  .product-card {
+    @apply transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .product-card:hover {
+    @apply shadow-primary/20;
+  }
+
+  /* Price styling */
+  .price-original {
+    @apply text-muted-foreground line-through text-sm;
+  }
+
+  .price-final {
+    @apply text-primary font-bold text-lg;
+  }
+
+  .price-discount {
+    @apply text-discount font-semibold;
+  }
+
+  /* Search results grid */
+  .results-grid {
+    @apply grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* Loading animations */
+  .skeleton-pulse {
+    @apply animate-pulse bg-gradient-to-r from-muted via-muted/50 to-muted;
+  }
+
+  /* Badge styles */
+  .badge-palindrome {
+    @apply bg-gradient-to-r from-primary to-secondary text-white font-semibold;
+  }
+
+  /* Search bar focus */
+  .search-focus {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Acueducto pattern (for background decoration) */
+  .acueducto-pattern {
+    background-image: 
+      linear-gradient(90deg, rgba(26, 76, 224, 0.1) 50%, transparent 50%),
+      linear-gradient(rgba(26, 76, 224, 0.1) 50%, transparent 50%);
+    background-size: 20px 20px;
+  }
+
+  /* Responsive text scaling */
+  .text-responsive-xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl;
+  }
+
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl lg:text-2xl;
+  }
+
+  /* Button hover effects */
+  .button-hover-lift {
+    @apply transition-all duration-200 hover:translate-y-[-2px] hover:shadow-md;
+  }
+
+  /* Card hover effects */
+  .card-hover-glow {
+    @apply transition-all duration-300 hover:shadow-xl hover:shadow-primary/10;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Custom focus styles */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply backdrop-blur-md bg-white/10 border border-white/20;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-md bg-black/10 border border-black/20;
+  }
+}

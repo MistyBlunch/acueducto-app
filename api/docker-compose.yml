@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: acueducto-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: acueducto
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d acueducto -h 127.0.0.1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    networks: [acueducto-network]
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acueducto-api
+    restart: unless-stopped
+    env_file:
+      - ./.env.docker
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -lc "yarn prisma:generate;
+              if [ ! -f dist/src/main.js ]; then
+                echo 'dist/src/main.js missing → compiling with nest build';
+                yarn build;
+              fi;
+              yarn prisma:migrate:deploy || true;
+              npx ts-node prisma/seed.ts || true;
+              node dist/src/main.js"
+    networks: [acueducto-network]
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: acueducto-pgadmin
+    restart: unless-stopped
+    profiles:
+      - development
+    environment:
+      PGLADMIN_DEFAULT_EMAIL: admin@acueducto.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGLADMIN_CONFIG_SERVER_MODE: 'False'
+      PGLADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    ports:
+      - "5050:80"
+    networks: [acueducto-network]
+    depends_on:
+      - postgres
+    volumes:
+      - pgladmin_data:/var/lib/pgladmin
+
+networks:
+  acueducto-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  pgladmin_data:
+    driver: local

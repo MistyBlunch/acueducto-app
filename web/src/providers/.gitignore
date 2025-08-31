@@ -1,0 +1,11 @@
+# Provider build artifacts
+*.provider.js
+*.provider.d.ts
+
+# Generated providers
+generated-*.provider.tsx
+auto-*.provider.tsx
+
+# Context build files
+*.context.js
+*.context.d.ts

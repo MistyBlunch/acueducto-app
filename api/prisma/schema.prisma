@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pg_trgm]
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  title        String   @db.VarChar(255)
+  brand        String   @db.VarChar(100)
+  description  String   @db.Text
+  priceCents   Int
+  currency     String   @default("USD") @db.VarChar(3)
+  stock        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Índices BTree simples para búsquedas
+  @@index([title])
+  @@index([brand])
+  @@index([description])
+  @@map("products")
+}

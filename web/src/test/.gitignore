@@ -1,0 +1,12 @@
+# Test build artifacts
+*.test.js
+*.spec.js
+*.test.d.ts
+
+# Test utilities build
+*.util.js
+*.helper.js
+
+# Generated test files
+generated-*.test.tsx
+auto-*.spec.tsx

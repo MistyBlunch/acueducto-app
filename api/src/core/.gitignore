@@ -1,0 +1,8 @@
+# Compiled domain files
+*.js
+*.js.map
+*.d.ts
+
+# Generated entities
+generated-*.entity.ts
+auto-*.entity.ts

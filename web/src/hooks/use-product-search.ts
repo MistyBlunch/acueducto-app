@@ -92,20 +92,12 @@ export function useProductSearch(
     }),
     enabled: shouldSearch,
     queryFn: async () => {
-      console.log(
-        `🔍 Searching products with query: "${debouncedQuery}", page: ${page}, pageSize: ${pageSize}`,
-      );
-
       try {
         const response = await apiClient.searchProducts({
           query: debouncedQuery,
           page,
           pageSize,
         });
-
-        console.log(
-          `✅ Search successful. Found ${response.items?.length || 0} items`,
-        );
 
         // Validate response with Zod
         const validatedResponse = ProductsResponseSchema.parse(response);
@@ -123,11 +115,9 @@ export function useProductSearch(
       if (error && 'statusCode' in error) {
         const statusCode = (error as any).statusCode;
         if (statusCode >= 400 && statusCode < 500) {
-          console.log(`🚫 Not retrying client error: ${statusCode}`);
           return false;
         }
       }
-      console.log(`🔄 Retrying search (attempt ${failureCount + 1}/3)`);
       return failureCount < 3;
     },
   });
@@ -136,16 +126,8 @@ export function useProductSearch(
     queryKey: queryKeys.allProducts(page, pageSize),
     enabled: !shouldSearch,
     queryFn: async () => {
-      console.log(
-        `🔍 Fetching all products - page: ${page}, pageSize: ${pageSize}`,
-      );
-
       try {
         const response = await apiClient.getAllProducts(page, pageSize);
-
-        console.log(
-          `✅ Fetch successful. Found ${response.items?.length || 0} items`,
-        );
 
         // Validate response with Zod
         const validatedResponse = ProductsResponseSchema.parse(response);
@@ -163,11 +145,9 @@ export function useProductSearch(
       if (error && 'statusCode' in error) {
         const statusCode = (error as any).statusCode;
         if (statusCode >= 400 && statusCode < 500) {
-          console.log(`🚫 Not retrying client error: ${statusCode}`);
           return false;
         }
       }
-      console.log(`🔄 Retrying fetch (attempt ${failureCount + 1}/3)`);
       return failureCount < 3;
     },
   });

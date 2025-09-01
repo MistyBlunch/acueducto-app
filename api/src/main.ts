@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { RequestMethod } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -9,6 +8,8 @@ async function bootstrap() {
 
   // CORS configuration - allow all in development
   const isDevelopment = process.env.NODE_ENV !== 'production';
+
+  console.log('********** isDevelopment', isDevelopment);
 
   app.enableCors({
     origin: isDevelopment
@@ -36,9 +37,7 @@ async function bootstrap() {
 
   const prefix = process.env.API_PREFIX?.trim();
   if (prefix) {
-    app.setGlobalPrefix(prefix, {
-      exclude: [{ path: 'health', method: RequestMethod.GET }],
-    });
+    app.setGlobalPrefix(prefix);
   }
 
   app.set('trust proxy', true);

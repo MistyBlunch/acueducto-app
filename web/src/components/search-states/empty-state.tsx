@@ -1,75 +1,13 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Search, Lightbulb, TrendingUp, Filter } from 'lucide-react';
+import { Search, TrendingUp } from 'lucide-react';
 import { isPalindrome } from '@/lib/utils';
 
 interface EmptyStateProps {
   query: string;
-  searchMetadata?: {
-    total: number;
-    executionTimeMs: number;
-    isPalindrome: boolean;
-    executedAt: string;
-  };
-  onClearSearch?: () => void;
 }
 
-export function EmptyState({
-  query,
-  searchMetadata,
-  onClearSearch,
-}: EmptyStateProps) {
+export function EmptyState({ query }: EmptyStateProps) {
   const isQueryPalindrome = isPalindrome(query.trim());
-
-  // Generate search suggestions based on the query
-  const getSuggestions = () => {
-    const queryWords = query.toLowerCase().trim().split(' ');
-    const suggestions = [];
-
-    // Product-related suggestions
-    if (queryWords.some(word => ['producto', 'item'].includes(word))) {
-      suggestions.push(
-        'productos populares',
-        'productos nuevos',
-        'productos destacados',
-      );
-    } else if (
-      queryWords.some(word => ['accesorios', 'equipos'].includes(word))
-    ) {
-      suggestions.push(
-        'accesorios deportivos',
-        'equipos premium',
-        'accesorios populares',
-      );
-    } else if (
-      queryWords.some(word => ['ropa', 'camiseta', 'shorts'].includes(word))
-    ) {
-      suggestions.push('ropa casual', 'ropa deportiva', 'vestimenta');
-    } else {
-      // Default suggestions
-      suggestions.push(
-        'productos populares',
-        'ofertas especiales',
-        'nuevos productos',
-        'categorías',
-      );
-    }
-
-    return suggestions.slice(0, 3);
-  };
-
-  const suggestions = getSuggestions();
-
-  // Palindrome suggestions for discounts
-  const palindromeSuggestions = [
-    'ana',
-    'oso',
-    'radar',
-    'level',
-    'civic',
-    'noon',
-  ];
 
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">

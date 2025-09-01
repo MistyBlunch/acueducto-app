@@ -19,9 +19,6 @@ export function ProductCard({ product }: ProductCardProps) {
     palindromeDiscountApplied,
   } = product;
 
-  const isOutOfStock = stock === 0;
-  const hasDiscount = finalPriceCents && finalPriceCents < priceCents;
-
   return (
     <Card className="h-full transition-all hover:shadow-lg">
       <CardHeader className="pb-3">
@@ -35,14 +32,14 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-primary">{brand}</span>
-          {isOutOfStock && (
+          {stock === 0 && (
             <Badge variant="destructive" className="text-xs">
               Sin stock
             </Badge>
           )}
           {stock > 0 && stock <= 5 && (
-            <Badge variant="warning" className="text-xs">
-              Últimas unidades
+            <Badge variant="warning" className="text-xs m">
+              <span className="mt-0 mb-[-.3rem]">Últimas unidades</span>
             </Badge>
           )}
         </div>
@@ -56,9 +53,9 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="flex justify-between items-end">
           <Price
             priceCents={priceCents}
-            finalPriceCents={finalPriceCents}
+            finalPriceCents={finalPriceCents ?? 0}
             currency={currency}
-            palindromeDiscountApplied={palindromeDiscountApplied}
+            palindromeDiscountApplied={palindromeDiscountApplied ?? false}
           />
 
           {stock > 0 && (

@@ -25,4 +25,6 @@ export const queryKeys = {
   all: ['products'] as const,
   search: (params: { query?: string; page?: number; pageSize?: number }) =>
     [...queryKeys.all, 'search', params] as const,
+  allProducts: (page?: number, pageSize?: number) =>
+    [...queryKeys.all, 'all', { page, pageSize }] as const,
 };

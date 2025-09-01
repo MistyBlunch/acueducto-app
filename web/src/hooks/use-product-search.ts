@@ -12,6 +12,7 @@ export type SearchState = 'idle' | 'loading' | 'success' | 'error' | 'empty';
 export interface UseProductSearchResult {
   // Data
   data?: ProductsResponse;
+  allProductsData?: ProductsResponse;
 
   // States
   state: SearchState;
@@ -114,7 +115,6 @@ export function useProductSearch(
         throw error;
       }
     },
-    enabled: shouldSearch,
     placeholderData: previousData => previousData,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -128,6 +128,46 @@ export function useProductSearch(
         }
       }
       console.log(`🔄 Retrying search (attempt ${failureCount + 1}/3)`);
+      return failureCount < 3;
+    },
+  });
+
+  const allProductsQueryResult = useQuery({
+    queryKey: queryKeys.allProducts(page, pageSize),
+    enabled: !shouldSearch,
+    queryFn: async () => {
+      console.log(
+        `🔍 Fetching all products - page: ${page}, pageSize: ${pageSize}`,
+      );
+
+      try {
+        const response = await apiClient.getAllProducts(page, pageSize);
+
+        console.log(
+          `✅ Fetch successful. Found ${response.items?.length || 0} items`,
+        );
+
+        // Validate response with Zod
+        const validatedResponse = ProductsResponseSchema.parse(response);
+        return validatedResponse;
+      } catch (error) {
+        console.error('❌ Fetch failed:', error);
+        throw error;
+      }
+    },
+    placeholderData: previousData => previousData,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: (failureCount, error) => {
+      // Don't retry on client errors (4xx)
+      if (error && 'statusCode' in error) {
+        const statusCode = (error as any).statusCode;
+        if (statusCode >= 400 && statusCode < 500) {
+          console.log(`🚫 Not retrying client error: ${statusCode}`);
+          return false;
+        }
+      }
+      console.log(`🔄 Retrying fetch (attempt ${failureCount + 1}/3)`);
       return failureCount < 3;
     },
   });
@@ -157,10 +197,15 @@ export function useProductSearch(
     };
   }, [queryResult.data]);
 
-  const hasNextPage = queryResult.data?.pagination.hasNextPage ?? false;
-  const hasPreviousPage = queryResult.data?.pagination.hasPreviousPage ?? false;
+  const hasNextPage = shouldSearch
+    ? (queryResult.data?.pagination.hasNextPage ?? false)
+    : (allProductsQueryResult.data?.pagination.hasNextPage ?? false);
+  const hasPreviousPage = shouldSearch
+    ? (queryResult.data?.pagination.hasPreviousPage ?? false)
+    : (allProductsQueryResult.data?.pagination.hasPreviousPage ?? false);
   return {
     data: queryResult.data,
+    allProductsData: allProductsQueryResult.data,
     state,
     isIdle: state === 'idle',
     isLoading: state === 'loading',

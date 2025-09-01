@@ -5,7 +5,6 @@ import { ProductCard } from '@/components/product-card';
 import {
   ChevronLeft,
   ChevronRight,
-  Clock,
   TrendingUp,
   CheckCircle,
 } from 'lucide-react';

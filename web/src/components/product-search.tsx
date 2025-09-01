@@ -41,10 +41,6 @@ export function ProductSearch({
     search.updateQuery(query);
   };
 
-  const handleClearSearch = () => {
-    search.updateQuery('');
-  };
-
   const renderSearchState = () => {
     switch (search.state) {
       case 'idle':
@@ -73,13 +69,7 @@ export function ProductSearch({
         );
 
       case 'empty':
-        return (
-          <EmptyState
-            query={search.debouncedQuery}
-            searchMetadata={search.searchMetadata}
-            onClearSearch={handleClearSearch}
-          />
-        );
+        return <EmptyState query={search.debouncedQuery} />;
 
       case 'success':
         return (
@@ -108,7 +98,20 @@ export function ProductSearch({
         />
       </div>
 
-      <div className="min-h-[400px]">{renderSearchState()}</div>
+      <div className="min-h-[400px]">
+        {search.debouncedQuery.trim() === '' && search.allProductsData ? (
+          <SuccessState
+            data={search.allProductsData}
+            query=""
+            page={search.page}
+            onPageChange={search.setPage}
+            hasNextPage={search.hasNextPage}
+            hasPreviousPage={search.hasPreviousPage}
+          />
+        ) : (
+          renderSearchState()
+        )}
+      </div>
     </div>
   );
 }

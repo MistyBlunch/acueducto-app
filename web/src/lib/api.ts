@@ -6,7 +6,7 @@ import {
 } from '@/types/api';
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+  process.env['NEXT_PUBLIC_API_BASE_URL'] || 'http://localhost:3001';
 
 export class ApiClient {
   private baseURL: string;
@@ -104,6 +104,17 @@ export class ApiClient {
     }
     searchParams.append('page', params.page.toString());
     searchParams.append('pageSize', params.pageSize.toString());
+
+    const endpoint = `/products?${searchParams.toString()}`;
+    const response = await this.request(endpoint);
+
+    return ProductsResponseSchema.parse(response);
+  }
+
+  async getAllProducts(page: number = 1, pageSize: number = 12) {
+    const searchParams = new URLSearchParams();
+    searchParams.append('page', page.toString());
+    searchParams.append('pageSize', pageSize.toString());
 
     const endpoint = `/products?${searchParams.toString()}`;
     const response = await this.request(endpoint);

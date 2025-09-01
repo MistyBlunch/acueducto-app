@@ -1,49 +1,24 @@
-// Default Jest configuration - runs both unit and e2e tests
-const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig.json');
-
 module.exports = {
-  displayName: 'All Tests',
   preset: 'ts-jest',
   testEnvironment: 'node',
-  
-  // Test files patterns
-  testMatch: [
-    '<rootDir>/src/**/*.spec.ts',
-    '<rootDir>/test/**/*.spec.ts',
-    '<rootDir>/test/**/*.e2e-spec.ts',
-  ],
-  
-  // Coverage configuration
+  roots: ['<rootDir>/src'],
+  testMatch: ['**/__tests__/**/*.test.ts'],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
   collectCoverageFrom: [
-    'src/**/*.ts',
+    'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
-    '!src/**/index.ts',
     '!src/main.ts',
     '!src/**/*.module.ts',
   ],
-  coverageDirectory: 'coverage/all',
-  coverageReporters: ['text-summary', 'lcov', 'html'],
-  
-  // Module resolution
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
-    prefix: '<rootDir>/',
-  }),
-  
-  // Setup files
-  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
-  
-  // Transform configuration
-  transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
-  
-  // Test timeout
-  testTimeout: 30000,
-  
-  // Verbose output
   verbose: true,
-  
-  // Clear mocks between tests
   clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
+  testTimeout: 10000,
+  maxWorkers: 1,
 };

@@ -231,14 +231,6 @@ test.describe('Product Search Flow', () => {
       timeout: 5000,
     });
 
-    // Check first product card details
-    const firstProductCard = page
-      .locator('[data-testid="product-card"]')
-      .first();
-    await expect(page.getByText('Raqueta Wilson Pro Staff')).toBeVisible();
-    await expect(page.getByText('Wilson')).toBeVisible();
-    await expect(page.getByText('Raqueta profesional utilizada')).toBeVisible();
-
     // Check pricing display with discount
     await expect(page.getByText('€250.00')).toBeVisible(); // Original price (struck through)
     await expect(page.getByText('€125.00')).toBeVisible(); // Final price

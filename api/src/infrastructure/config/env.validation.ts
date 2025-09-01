@@ -41,7 +41,7 @@ export const envSchema = z.object({
     })
     .default('http://localhost:3000')
     .optional(),
-  
+
   // Legacy support for CORS_ORIGIN (fallback)
   CORS_ORIGIN: z.string().optional(),
 
@@ -60,14 +60,6 @@ export const envSchema = z.object({
     .transform(val => val === 'true')
     .default('true'),
 
-  // API Documentation
-  SWAGGER_PATH: z.string().default('api/docs'),
-  SWAGGER_TITLE: z.string().default('Acueducto API'),
-  SWAGGER_DESCRIPTION: z
-    .string()
-    .default('API documentation for Acueducto application'),
-  SWAGGER_VERSION: z.string().default('1.0.0'),
-
   // Rate limiting
   THROTTLE_TTL: z
     .string()
@@ -81,15 +73,17 @@ export const envSchema = z.object({
 
 export type EnvConfig = z.infer<typeof envSchema>;
 
-export function validateEnvironment(config: Record<string, unknown>): EnvConfig {
+export function validateEnvironment(
+  config: Record<string, unknown>,
+): EnvConfig {
   try {
     const validated = envSchema.parse(config);
-    
+
     // Handle WEB_ORIGIN fallback to CORS_ORIGIN for backward compatibility
     if (!validated.WEB_ORIGIN && validated.CORS_ORIGIN) {
       validated.WEB_ORIGIN = validated.CORS_ORIGIN;
     }
-    
+
     return validated;
   } catch (error) {
     if (error instanceof z.ZodError) {

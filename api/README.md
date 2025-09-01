@@ -4,13 +4,12 @@ API de búsqueda de productos con filtrado inteligente y sistema de descuentos p
 
 ## 📋 Descripción del Proyecto
 
-Acueducto es una API RESTful desarrollada en **NestJS** que implementa un sistema de búsqueda inteligente de productos con las siguientes características principales:
+Acueducto es una API desarrollada en **NestJS** que implementa un sistema de búsqueda inteligente de productos con las siguientes características principales:
 
 - **Búsqueda Inteligente**: Algoritmo que combina coincidencia exacta.
 - **Sistema de Descuentos por Palíndromos**: Los productos con marcas palíndromas obtienen 50% de descuento automáticamente
 - **Arquitectura Limpia**: Separación clara entre capas (Core/Application/Infrastructure)
 - **Base de Datos Automática**: Inicialización automática con más de 30 productos de electrodomésticos
-- **Documentación Swagger**: API docs disponibles en `/api/docs`
 
 ## 🛠️ Requerimientos del Sistema
 
@@ -152,32 +151,6 @@ Si deseas crear productos adicionales via API, puedes implementar endpoints POST
   stock: number;        // Cantidad disponible
 }
 ```
-
-## 🏗️ Arquitectura del Proyecto
-
-```
-src/
-├── core/                    # Lógica de dominio
-│   ├── entities/           # Entidades de negocio
-│   ├── interfaces/         # Contratos y abstracciones
-│   ├── services/           # Servicios de dominio
-│   └── value-objects/      # Objetos de valor
-├── application/            # Casos de uso
-│   ├── dto/               # DTOs de aplicación
-│   └── use-cases/         # Lógica de aplicación
-└── infrastructure/        # Implementaciones técnicas
-    ├── database/          # Prisma y configuración DB
-    ├── http/             # Controladores REST
-    ├── repositories/     # Implementación repositorios
-    └── services/         # Servicios de infraestructura
-```
-## 📚 Documentación Adicional
-
-- **Swagger/OpenAPI**: Disponible en `/api/docs` cuando la app esté ejecutándose
-- **Prisma Studio**: `yarn prisma studio` para explorar la base de datos
-- **Logs estructurados**: Usando Pino para logging detallado
-
----
 
 ## 🏃‍♂️ Quick Start
 

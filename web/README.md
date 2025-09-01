@@ -12,7 +12,7 @@ Acueducto Web es una aplicación frontend desarrollada en **Next.js 14** que pro
 ### Funcionalidades Principales
 
 - **Búsqueda con Debounce**: Optimización de consultas con retraso de 300ms
-- **Estados de Búsqueda**: idle, loading, success, empty, error con componentes dedicados
+- **Estados de Búsqueda**: loading, success, empty, error con componentes dedicados
 - **Precios Dinámicos**: Visualización de precios originales y con descuento
 - **Responsive Design**: Optimizado para móvil y escritorio
 
@@ -68,19 +68,7 @@ La aplicación estará disponible en: `http://localhost:3000`
 
 - **`/`** - Página principal con búsqueda de productos y resultados dinámicos
 
-### Funcionalidades de Búsqueda
-
-#### 🔍 Búsqueda Inteligente
-
-- **Debounce**: Retraso de 300ms para optimizar consultas a la API
-- **Estados Completos**: Manejo de loading, success, empty y error
-- **Sugerencias Visuales**: Hints para términos palíndromos con potencial descuento
-
-#### 🎨 Interfaz de Usuario
-
-- **Diseño Moderno**: Colores azul primario y estética limpia
-- **Componentes Reutilizables**: Sistema de design con shadcn/ui
-
+## 🔧 Scripts Disponibles
 ```bash
 # Desarrollo
 yarn dev                 # Servidor desarrollo con hot-reload
@@ -95,7 +83,7 @@ yarn test               # Todos los tests (unit + e2e)
 
 ```bash
 # Inicio rápido
-cd web && npm install && npm run dev
+cd web && yarn install && yarn dev
 
 # Verificar que funciona
 open http://localhost:3000

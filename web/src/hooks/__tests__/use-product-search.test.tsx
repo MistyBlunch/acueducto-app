@@ -7,6 +7,7 @@ import * as apiModule from '@/lib/api';
 vi.mock('@/lib/api', () => ({
   apiClient: {
     searchProducts: vi.fn(),
+    getAllProducts: vi.fn(),
   },
 }));
 
@@ -58,10 +59,12 @@ const mockApiResponse = {
 
 describe('useProductSearch', () => {
   const mockSearchProducts = vi.mocked(apiModule.apiClient.searchProducts);
+  const mockGetAllProducts = vi.mocked(apiModule.apiClient.getAllProducts);
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockSearchProducts.mockResolvedValue(mockApiResponse);
+    mockGetAllProducts.mockResolvedValue(mockApiResponse);
   });
 
   it('should initialize with provided query', () => {

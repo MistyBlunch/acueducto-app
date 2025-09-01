@@ -1,12 +1,14 @@
-import { test as base, expect } from '@playwright/test';
+import { test as base } from '@playwright/test';
 
 // Extend the base test with MSW setup
 export const test = base.extend({
   page: async ({ page }, use) => {
-    // Set up MSW before each test
-    await page.route('**/products/search*', async route => {
+    // Set up API mocking before each test
+    await page.route('**/products*', async route => {
       const url = new URL(route.request().url());
       const query = url.searchParams.get('query') || '';
+      const page_param = parseInt(url.searchParams.get('page') || '1');
+      const pageSize = parseInt(url.searchParams.get('pageSize') || '12');
 
       // Mock API responses
       const isPalindromeQuery = (str: string): boolean => {
@@ -16,102 +18,76 @@ export const test = base.extend({
 
       const isQueryPalindrome = isPalindromeQuery(query);
 
-      let mockResponse;
+      // Mock products data
+      const palindromeProducts = [
+        {
+          id: '1',
+          title: 'Raqueta Wilson Pro Staff',
+          brand: 'Wilson',
+          description:
+            'Raqueta profesional utilizada por los mejores jugadores del mundo.',
+          priceCents: 25000,
+          finalPriceCents: 12500,
+          currency: 'EUR',
+          stock: 5,
+          createdAt: new Date().toISOString(),
+          palindromeDiscountApplied: true,
+        },
+        {
+          id: '2',
+          title: 'Pelotas Penn Championship',
+          brand: 'Penn',
+          description: 'Pack de 3 pelotas oficiales para torneos.',
+          priceCents: 800,
+          finalPriceCents: 400,
+          currency: 'EUR',
+          stock: 25,
+          createdAt: new Date().toISOString(),
+          palindromeDiscountApplied: true,
+        },
+      ];
 
-      if (query.toLowerCase() === 'oso' || query.toLowerCase() === 'ana') {
+      const regularProducts = [
+        {
+          id: '3',
+          title: 'Zapatillas Nike Court',
+          brand: 'Nike',
+          description: 'Zapatillas de tenis cómodas y duraderas.',
+          priceCents: 12000,
+          currency: 'EUR',
+          stock: 15,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: '4',
+          title: 'Camiseta Adidas Performance',
+          brand: 'Adidas',
+          description: 'Camiseta técnica de tenis con tecnología Climalite.',
+          priceCents: 4500,
+          currency: 'EUR',
+          stock: 30,
+          createdAt: new Date().toISOString(),
+        },
+      ];
+
+      let products = [];
+
+      // Determine which products to return based on query
+      if (!query || query.trim() === '') {
+        // getAllProducts - return all products
+        products = [...regularProducts, ...palindromeProducts];
+      } else if (
+        query.toLowerCase() === 'oso' ||
+        query.toLowerCase() === 'ana'
+      ) {
         // Palindrome search response
-        mockResponse = {
-          items: [
-            {
-              id: '1',
-              title: 'Raqueta Wilson Pro Staff',
-              brand: 'Wilson',
-              description:
-                'Raqueta profesional utilizada por los mejores jugadores del mundo.',
-              priceCents: 25000,
-              finalPriceCents: 12500,
-              currency: 'EUR',
-              stock: 5,
-              createdAt: new Date().toISOString(),
-              palindromeDiscountApplied: true,
-            },
-            {
-              id: '2',
-              title: 'Pelotas Penn Championship',
-              brand: 'Penn',
-              description: 'Pack de 3 pelotas oficiales para torneos.',
-              priceCents: 800,
-              finalPriceCents: 400,
-              currency: 'EUR',
-              stock: 25,
-              createdAt: new Date().toISOString(),
-              palindromeDiscountApplied: true,
-            },
-          ],
-          pagination: {
-            page: 1,
-            pageSize: 10,
-            total: 2,
-            totalPages: 1,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          },
-          meta: {
-            query,
-            isPalindrome: true,
-            executedAt: new Date().toISOString(),
-            executionTimeMs: 45,
-          },
-        };
+        products = palindromeProducts;
       } else if (query.toLowerCase() === 'raqueta') {
         // Non-palindrome search response
-        mockResponse = {
-          items: [
-            {
-              id: '3',
-              title: 'Zapatillas Nike Court',
-              brand: 'Nike',
-              description: 'Zapatillas de tenis cómodas y duraderas.',
-              priceCents: 12000,
-              currency: 'EUR',
-              stock: 15,
-              createdAt: new Date().toISOString(),
-            },
-          ],
-          pagination: {
-            page: 1,
-            pageSize: 10,
-            total: 1,
-            totalPages: 1,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          },
-          meta: {
-            query,
-            isPalindrome: false,
-            executedAt: new Date().toISOString(),
-            executionTimeMs: 32,
-          },
-        };
+        products = [regularProducts[0]]; // Just Nike shoes
       } else if (query.toLowerCase() === 'noexiste') {
         // Empty response
-        mockResponse = {
-          items: [],
-          pagination: {
-            page: 1,
-            pageSize: 10,
-            total: 0,
-            totalPages: 0,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          },
-          meta: {
-            query,
-            isPalindrome: false,
-            executedAt: new Date().toISOString(),
-            executionTimeMs: 15,
-          },
-        };
+        products = [];
       } else if (query.toLowerCase() === 'error') {
         // Error response
         await route.fulfill({
@@ -122,30 +98,37 @@ export const test = base.extend({
             message: 'Internal server error',
             error: 'Internal Server Error',
             timestamp: new Date().toISOString(),
-            path: '/products/search',
+            path: '/products',
           }),
         });
         return;
       } else {
-        // Default response
-        mockResponse = {
-          items: [],
-          pagination: {
-            page: 1,
-            pageSize: 10,
-            total: 0,
-            totalPages: 0,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          },
-          meta: {
-            query,
-            isPalindrome: isQueryPalindrome,
-            executedAt: new Date().toISOString(),
-            executionTimeMs: 20,
-          },
-        };
+        // Default search - return some products
+        products = regularProducts;
       }
+
+      // Apply pagination
+      const startIndex = (page_param - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedProducts = products.slice(startIndex, endIndex);
+
+      const mockResponse = {
+        items: paginatedProducts,
+        pagination: {
+          page: page_param,
+          pageSize,
+          total: products.length,
+          totalPages: Math.ceil(products.length / pageSize),
+          hasNextPage: endIndex < products.length,
+          hasPreviousPage: page_param > 1,
+        },
+        meta: {
+          query: query || undefined,
+          isPalindrome: query ? isQueryPalindrome : false,
+          executedAt: new Date().toISOString(),
+          executionTimeMs: Math.floor(Math.random() * 50) + 10,
+        },
+      };
 
       await route.fulfill({
         status: 200,

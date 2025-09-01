@@ -1,50 +1,54 @@
-'use client'
+'use client';
 
-import { useState, useCallback } from 'react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Search, X } from 'lucide-react'
-import { isPalindrome, debounce } from '@/lib/utils'
+import { useState, useCallback } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Search, X } from 'lucide-react';
+import { isPalindrome, debounce } from '@/lib/utils';
 
 interface SearchBarProps {
-  onSearch: (query: string) => void
-  isLoading?: boolean
-  placeholder?: string
+  onSearch: (query: string) => void;
+  isLoading?: boolean;
+  placeholder?: string;
 }
 
-export function SearchBar({ onSearch, isLoading, placeholder = "Buscar productos..." }: SearchBarProps) {
-  const [query, setQuery] = useState('')
-  const [showPalindromeHint, setShowPalindromeHint] = useState(false)
+export function SearchBar({
+  onSearch,
+  isLoading,
+  placeholder = 'Buscar productos...',
+}: SearchBarProps) {
+  const [query, setQuery] = useState('');
+  const [showPalindromeHint, setShowPalindromeHint] = useState(false);
 
   // Debounced search function
   const debouncedSearch = useCallback(
     debounce((searchQuery: string) => {
-      onSearch(searchQuery)
+      onSearch(searchQuery);
     }, 300),
-    [onSearch]
-  )
+    [onSearch],
+  );
 
   const handleInputChange = (value: string) => {
-    setQuery(value)
-    
+    setQuery(value);
+
     // Show palindrome hint if the query is a palindrome and has at least 3 characters
-    const isQueryPalindrome = isPalindrome(value) && value.trim().length >= 3
-    setShowPalindromeHint(isQueryPalindrome)
-    
-    debouncedSearch(value)
-  }
+    const isQueryPalindrome = isPalindrome(value) && value.trim().length >= 3;
+    setShowPalindromeHint(isQueryPalindrome);
+
+    debouncedSearch(value);
+  };
 
   const handleClear = () => {
-    setQuery('')
-    setShowPalindromeHint(false)
-    onSearch('')
-  }
+    setQuery('');
+    setShowPalindromeHint(false);
+    onSearch('');
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSearch(query)
-  }
+    e.preventDefault();
+    onSearch(query);
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -55,7 +59,7 @@ export function SearchBar({ onSearch, isLoading, placeholder = "Buscar productos
             type="text"
             placeholder={placeholder}
             value={query}
-            onChange={(e) => handleInputChange(e.target.value)}
+            onChange={e => handleInputChange(e.target.value)}
             className="pl-10 pr-20 h-12 text-base"
             disabled={isLoading}
           />
@@ -72,7 +76,7 @@ export function SearchBar({ onSearch, isLoading, placeholder = "Buscar productos
           )}
         </div>
       </form>
-      
+
       {showPalindromeHint && (
         <div className="mt-2 flex justify-center">
           <Badge variant="palindrome" className="animate-pulse">
@@ -81,5 +85,5 @@ export function SearchBar({ onSearch, isLoading, placeholder = "Buscar productos
         </div>
       )}
     </div>
-  )
+  );
 }

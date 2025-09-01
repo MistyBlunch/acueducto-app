@@ -1,23 +1,23 @@
-import { test as base, expect } from '@playwright/test'
+import { test as base, expect } from '@playwright/test';
 
 // Extend the base test with MSW setup
 export const test = base.extend({
   page: async ({ page }, use) => {
     // Set up MSW before each test
-    await page.route('**/products/search*', async (route) => {
-      const url = new URL(route.request().url())
-      const query = url.searchParams.get('query') || ''
-      
+    await page.route('**/products/search*', async route => {
+      const url = new URL(route.request().url());
+      const query = url.searchParams.get('query') || '';
+
       // Mock API responses
       const isPalindromeQuery = (str: string): boolean => {
-        const normalized = str.toLowerCase().replace(/[^a-z0-9]/g, '')
-        return normalized === normalized.split('').reverse().join('')
-      }
-      
-      const isQueryPalindrome = isPalindromeQuery(query)
-      
-      let mockResponse
-      
+        const normalized = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return normalized === normalized.split('').reverse().join('');
+      };
+
+      const isQueryPalindrome = isPalindromeQuery(query);
+
+      let mockResponse;
+
       if (query.toLowerCase() === 'oso' || query.toLowerCase() === 'ana') {
         // Palindrome search response
         mockResponse = {
@@ -26,7 +26,8 @@ export const test = base.extend({
               id: '1',
               title: 'Raqueta Wilson Pro Staff',
               brand: 'Wilson',
-              description: 'Raqueta profesional utilizada por los mejores jugadores del mundo.',
+              description:
+                'Raqueta profesional utilizada por los mejores jugadores del mundo.',
               priceCents: 25000,
               finalPriceCents: 12500,
               currency: 'EUR',
@@ -45,7 +46,7 @@ export const test = base.extend({
               stock: 25,
               createdAt: new Date().toISOString(),
               palindromeDiscountApplied: true,
-            }
+            },
           ],
           pagination: {
             page: 1,
@@ -60,8 +61,8 @@ export const test = base.extend({
             isPalindrome: true,
             executedAt: new Date().toISOString(),
             executionTimeMs: 45,
-          }
-        }
+          },
+        };
       } else if (query.toLowerCase() === 'raqueta') {
         // Non-palindrome search response
         mockResponse = {
@@ -75,7 +76,7 @@ export const test = base.extend({
               currency: 'EUR',
               stock: 15,
               createdAt: new Date().toISOString(),
-            }
+            },
           ],
           pagination: {
             page: 1,
@@ -90,8 +91,8 @@ export const test = base.extend({
             isPalindrome: false,
             executedAt: new Date().toISOString(),
             executionTimeMs: 32,
-          }
-        }
+          },
+        };
       } else if (query.toLowerCase() === 'noexiste') {
         // Empty response
         mockResponse = {
@@ -109,8 +110,8 @@ export const test = base.extend({
             isPalindrome: false,
             executedAt: new Date().toISOString(),
             executionTimeMs: 15,
-          }
-        }
+          },
+        };
       } else if (query.toLowerCase() === 'error') {
         // Error response
         await route.fulfill({
@@ -121,10 +122,10 @@ export const test = base.extend({
             message: 'Internal server error',
             error: 'Internal Server Error',
             timestamp: new Date().toISOString(),
-            path: '/products/search'
-          })
-        })
-        return
+            path: '/products/search',
+          }),
+        });
+        return;
       } else {
         // Default response
         mockResponse = {
@@ -142,19 +143,19 @@ export const test = base.extend({
             isPalindrome: isQueryPalindrome,
             executedAt: new Date().toISOString(),
             executionTimeMs: 20,
-          }
-        }
+          },
+        };
       }
-      
+
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify(mockResponse)
-      })
-    })
-    
-    await use(page)
-  },
-})
+        body: JSON.stringify(mockResponse),
+      });
+    });
 
-export { expect } from '@playwright/test'
+    await use(page);
+  },
+});
+
+export { expect } from '@playwright/test';

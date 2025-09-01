@@ -1,7 +1,6 @@
-// src/core/value-objects/pagination-params.vo.ts
 export interface PaginationParams {
-  page: number;      // 1-based
-  pageSize: number;  // items per page
+  page: number;
+  pageSize: number;
 }
 
 export const normalizePagination = (p?: Partial<PaginationParams>): PaginationParams => {

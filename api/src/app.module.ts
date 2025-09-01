@@ -7,7 +7,6 @@ import { createLoggerConfig } from './infrastructure/config/logger.config';
 
 @Module({
   imports: [
-    // Configuration with validation
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnvironment,
@@ -15,7 +14,6 @@ import { createLoggerConfig } from './infrastructure/config/logger.config';
       expandVariables: true,
     }),
 
-    // Logger configuration
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -30,7 +28,6 @@ import { createLoggerConfig } from './infrastructure/config/logger.config';
       },
     }),
 
-    // Feature modules
     ProductsModule,
   ],
   controllers: [],

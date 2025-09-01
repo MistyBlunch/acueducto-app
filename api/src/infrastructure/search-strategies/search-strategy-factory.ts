@@ -10,7 +10,6 @@ export class SearchStrategyFactoryImpl implements SearchStrategyFactory {
   ) {}
 
   getStrategy(query: SearchQuery): SearchStrategy {
-    // For now, we only have one strategy, but this allows for easy extension
     if (this.exactMatchStrategy.canHandle(query)) {
       return this.exactMatchStrategy
     }

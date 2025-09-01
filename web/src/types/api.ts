@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 // Product schema
 export const ProductSchema = z.object({
@@ -12,7 +12,7 @@ export const ProductSchema = z.object({
   stock: z.number().int().min(0),
   createdAt: z.string().datetime(),
   palindromeDiscountApplied: z.boolean().optional(),
-})
+});
 
 // Pagination schema
 export const PaginationSchema = z.object({
@@ -22,7 +22,7 @@ export const PaginationSchema = z.object({
   totalPages: z.number().int().min(0),
   hasPreviousPage: z.boolean(),
   hasNextPage: z.boolean(),
-})
+});
 
 // Meta schema
 export const MetaSchema = z.object({
@@ -30,28 +30,28 @@ export const MetaSchema = z.object({
   isPalindrome: z.boolean(),
   executedAt: z.string().datetime(),
   executionTimeMs: z.number().min(0),
-})
+});
 
 // Products response schema
 export const ProductsResponseSchema = z.object({
   items: z.array(ProductSchema),
   pagination: PaginationSchema,
   meta: MetaSchema,
-})
+});
 
 // Search params schema
 export const SearchParamsSchema = z.object({
   query: z.string().optional(),
   page: z.number().int().min(1).default(1),
   pageSize: z.number().int().min(1).max(100).default(10),
-})
+});
 
 // Type exports
-export type Product = z.infer<typeof ProductSchema>
-export type Pagination = z.infer<typeof PaginationSchema>
-export type Meta = z.infer<typeof MetaSchema>
-export type ProductsResponse = z.infer<typeof ProductsResponseSchema>
-export type SearchParams = z.infer<typeof SearchParamsSchema>
+export type Product = z.infer<typeof ProductSchema>;
+export type Pagination = z.infer<typeof PaginationSchema>;
+export type Meta = z.infer<typeof MetaSchema>;
+export type ProductsResponse = z.infer<typeof ProductsResponseSchema>;
+export type SearchParams = z.infer<typeof SearchParamsSchema>;
 
 // API Error schema
 export const ApiErrorSchema = z.object({
@@ -62,9 +62,9 @@ export const ApiErrorSchema = z.object({
   path: z.string(),
   requestId: z.string().optional(),
   details: z.unknown().optional(),
-})
+});
 
-export type ApiError = z.infer<typeof ApiErrorSchema>
+export type ApiError = z.infer<typeof ApiErrorSchema>;
 
 // Custom error class for API errors
 export class ApiException extends Error {
@@ -72,10 +72,10 @@ export class ApiException extends Error {
     public readonly statusCode: number,
     public readonly error: string,
     public readonly details?: unknown,
-    public readonly requestId?: string
+    public readonly requestId?: string,
   ) {
-    super(`API Error ${statusCode}: ${error}`)
-    this.name = 'ApiException'
+    super(`API Error ${statusCode}: ${error}`);
+    this.name = 'ApiException';
   }
 
   static fromResponse(response: ApiError): ApiException {
@@ -83,7 +83,7 @@ export class ApiException extends Error {
       response.statusCode,
       response.error,
       response.details,
-      response.requestId
-    )
+      response.requestId,
+    );
   }
 }

@@ -1,11 +1,11 @@
-import { formatPrice } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils';
 
 interface PriceProps {
-  priceCents: number
-  finalPriceCents?: number
-  currency: string
-  palindromeDiscountApplied?: boolean
-  className?: string
+  priceCents: number;
+  finalPriceCents?: number;
+  currency: string;
+  palindromeDiscountApplied?: boolean;
+  className?: string;
 }
 
 export function Price({
@@ -15,7 +15,7 @@ export function Price({
   palindromeDiscountApplied,
   className,
 }: PriceProps) {
-  const hasDiscount = finalPriceCents && finalPriceCents < priceCents
+  const hasDiscount = finalPriceCents && finalPriceCents < priceCents;
 
   if (!hasDiscount) {
     return (
@@ -24,7 +24,7 @@ export function Price({
           {formatPrice(priceCents, currency)}
         </span>
       </div>
-    )
+    );
   }
 
   return (
@@ -43,5 +43,5 @@ export function Price({
         </div>
       )}
     </div>
-  )
+  );
 }

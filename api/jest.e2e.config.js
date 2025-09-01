@@ -19,7 +19,7 @@ module.exports = {
   ],
   
   // Module resolution
-  moduleNameMapping: pathsToModuleNameMapper(compilerOptions.paths, {
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
     prefix: '<rootDir>/',
   }),
   

@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { SearchStrategy } from '../../core/interfaces/search-strategy.interface'
 import { ProductReader, PRODUCT_READER } from '../../core/interfaces/product-reader.interface'
 import { Product } from '../../core/entities/product.entity'
 import { SearchQuery } from '../../core/value-objects/search-query.vo'
 import { PaginationParams } from '../../core/value-objects/pagination-params.vo'
-import { Inject } from '@nestjs/common'
 
 @Injectable()
 export class ExactMatchSearchStrategy implements SearchStrategy {

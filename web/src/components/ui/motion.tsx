@@ -1,24 +1,20 @@
-'use client'
+'use client';
 
-import { lazy, Suspense, forwardRef } from 'react'
-import type { 
-  HTMLMotionProps,
-  MotionProps,
-  Variants 
-} from 'framer-motion'
+import { lazy, Suspense, forwardRef } from 'react';
+import type { HTMLMotionProps, MotionProps, Variants } from 'framer-motion';
 
 // Lazy load framer-motion to prevent blocking FCP
-const MotionDiv = lazy(() => 
-  import('framer-motion').then(mod => ({ default: mod.motion.div }))
-)
+const MotionDiv = lazy(() =>
+  import('framer-motion').then(mod => ({ default: mod.motion.div })),
+);
 
 const MotionSpan = lazy(() =>
-  import('framer-motion').then(mod => ({ default: mod.motion.span }))
-)
+  import('framer-motion').then(mod => ({ default: mod.motion.span })),
+);
 
 const MotionSection = lazy(() =>
-  import('framer-motion').then(mod => ({ default: mod.motion.section }))
-)
+  import('framer-motion').then(mod => ({ default: mod.motion.section })),
+);
 
 // Common animation variants
 export const fadeInUp: Variants = {
@@ -34,7 +30,7 @@ export const fadeInUp: Variants = {
       ease: [0.25, 0.46, 0.45, 0.94], // easeOutQuart
     },
   },
-}
+};
 
 export const fadeIn: Variants = {
   initial: {
@@ -47,7 +43,7 @@ export const fadeIn: Variants = {
       ease: 'easeOut',
     },
   },
-}
+};
 
 export const slideInLeft: Variants = {
   initial: {
@@ -62,7 +58,7 @@ export const slideInLeft: Variants = {
       ease: 'easeOut',
     },
   },
-}
+};
 
 export const scaleIn: Variants = {
   initial: {
@@ -77,7 +73,7 @@ export const scaleIn: Variants = {
       ease: 'easeOut',
     },
   },
-}
+};
 
 export const staggerChildren: Variants = {
   initial: {},
@@ -87,7 +83,7 @@ export const staggerChildren: Variants = {
       delayChildren: 0.2,
     },
   },
-}
+};
 
 export const bounceIn: Variants = {
   initial: {
@@ -98,13 +94,13 @@ export const bounceIn: Variants = {
     opacity: 1,
     scale: 1,
     transition: {
-      type: "spring",
+      type: 'spring',
       damping: 10,
       stiffness: 100,
       duration: 0.6,
     },
   },
-}
+};
 
 export const hoverLift: MotionProps = {
   whileHover: {
@@ -121,7 +117,7 @@ export const hoverLift: MotionProps = {
       duration: 0.1,
     },
   },
-}
+};
 
 export const hoverGlow: MotionProps = {
   whileHover: {
@@ -131,20 +127,21 @@ export const hoverGlow: MotionProps = {
       ease: 'easeOut',
     },
   },
-}
+};
 
 // Fallback component for SSR and while loading
-const Fallback = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ children, ...props }, ref) => (
-    <div ref={ref} {...props}>
-      {children}
-    </div>
-  )
-)
+const Fallback = forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ children, ...props }, ref) => (
+  <div ref={ref} {...props}>
+    {children}
+  </div>
+));
 
 // Wrapped motion components with fallbacks
 interface MotionDivProps extends HTMLMotionProps<'div'> {
-  fallback?: React.ComponentType<any>
+  fallback?: React.ComponentType<any>;
 }
 
 export const Motion = {
@@ -153,7 +150,7 @@ export const Motion = {
       <Suspense fallback={<FallbackComponent {...props} ref={ref} />}>
         <MotionDiv ref={ref} {...props} />
       </Suspense>
-    )
+    ),
   ),
 
   span: forwardRef<HTMLSpanElement, HTMLMotionProps<'span'>>(
@@ -161,7 +158,7 @@ export const Motion = {
       <Suspense fallback={<span ref={ref} {...props} />}>
         <MotionSpan ref={ref} {...props} />
       </Suspense>
-    )
+    ),
   ),
 
   section: forwardRef<HTMLElement, HTMLMotionProps<'section'>>(
@@ -169,34 +166,33 @@ export const Motion = {
       <Suspense fallback={<section ref={ref} {...props} />}>
         <MotionSection ref={ref} {...props} />
       </Suspense>
-    )
+    ),
   ),
-}
-
+};
 
 // Hook for checking if motion should be reduced
 export function useReducedMotion(): boolean {
-  if (typeof window === 'undefined') return false
-  
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (typeof window === 'undefined') return false;
+
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 // Higher-order component to conditionally apply animations
 export function withMotion<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  motionProps: MotionProps = {}
+  motionProps: MotionProps = {},
 ) {
   return forwardRef<any, P>((props, ref) => {
-    const shouldReduceMotion = useReducedMotion()
-    
+    const shouldReduceMotion = useReducedMotion();
+
     if (shouldReduceMotion) {
-      return <WrappedComponent ref={ref} {...props} />
+      return <WrappedComponent ref={ref} {...props} />;
     }
 
     return (
       <Motion.div ref={ref} {...motionProps}>
         <WrappedComponent {...props} />
       </Motion.div>
-    )
-  })
+    );
+  });
 }

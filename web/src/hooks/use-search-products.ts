@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
-import { apiClient } from '@/lib/api'
-import { queryKeys } from '@/lib/query-client'
-import { SearchParams } from '@/types/api'
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api';
+import { queryKeys } from '@/lib/query-client';
+import { type SearchParams } from '@/types/api';
 
 export interface UseSearchProductsParams extends SearchParams {
-  enabled?: boolean
+  enabled?: boolean;
 }
 
 export function useSearchProducts({
@@ -13,12 +13,12 @@ export function useSearchProducts({
   pageSize = 10,
   enabled = true,
 }: UseSearchProductsParams) {
-  const searchParams: SearchParams = { query, page, pageSize }
-  
+  const searchParams: SearchParams = { query, page, pageSize };
+
   return useQuery({
     queryKey: queryKeys.search(searchParams),
     queryFn: () => apiClient.searchProducts(searchParams),
     enabled: enabled && (query.trim().length > 0 || page > 1),
-    placeholderData: (previousData) => previousData,
-  })
+    placeholderData: previousData => previousData,
+  });
 }

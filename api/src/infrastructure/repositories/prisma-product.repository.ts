@@ -34,7 +34,6 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async findByExactTitle(title: string): Promise<Product | null> {
-    // Case-insensitive exact match using LOWER()
     const product = await this.prisma.product.findFirst({
       where: {
         title: {
@@ -131,9 +130,27 @@ export class PrismaProductRepository implements ProductRepository {
     return this.toDomain(created);
   }
 
-  async update(id: string, updates: Partial<Product>): Promise<Product> {
-    // TODO: Implement proper update logic when needed
-    throw new Error('Method not implemented');
+  async update(id: string, productData: Partial<Product>): Promise<Product> {
+    try {
+      const updateData: any = {};
+      
+      if (productData.title) updateData.title = productData.title;
+      if (productData.brand) updateData.brand = productData.brand;
+      if (productData.description) updateData.description = productData.description;
+      if (productData.priceCents !== undefined) updateData.priceCents = productData.priceCents;
+      if (productData.currency) updateData.currency = productData.currency;
+      if (productData.stock !== undefined) updateData.stock = productData.stock;
+
+      const updated = await this.prisma.product.update({
+        where: { id },
+        data: updateData,
+      });
+
+      return this.toDomain(updated);
+    } catch (error) {
+      this.logger.error(`Failed to update product with ID: ${id}`, error);
+      throw this.handlePrismaError(error, 'update');
+    }
   }
 
   async delete(id: string): Promise<void> {

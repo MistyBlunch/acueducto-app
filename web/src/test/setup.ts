@@ -1,15 +1,15 @@
-import '@testing-library/jest-dom'
-import { expect, afterEach } from 'vitest'
-import { cleanup } from '@testing-library/react'
-import * as matchers from '@testing-library/jest-dom/matchers'
+import '@testing-library/jest-dom';
+import { expect, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import * as matchers from '@testing-library/jest-dom/matchers';
 
 // Extend Vitest's expect with jest-dom matchers
-expect.extend(matchers)
+expect.extend(matchers);
 
 // Clean up after each test case
 afterEach(() => {
-  cleanup()
-})
+  cleanup();
+});
 
 // Mock Next.js router
 vi.mock('next/router', () => ({
@@ -30,9 +30,9 @@ vi.mock('next/router', () => ({
         off: vi.fn(),
         emit: vi.fn(),
       },
-    }
+    };
   },
-}))
+}));
 
 // Mock Next.js navigation
 vi.mock('next/navigation', () => ({
@@ -44,15 +44,15 @@ vi.mock('next/navigation', () => ({
       back: vi.fn(),
       forward: vi.fn(),
       refresh: vi.fn(),
-    }
+    };
   },
   useSearchParams() {
-    return new URLSearchParams()
+    return new URLSearchParams();
   },
   usePathname() {
-    return '/'
+    return '/';
   },
-}))
+}));
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_API_BASE_URL = 'http://localhost:3001'
+process.env.NEXT_PUBLIC_API_BASE_URL = 'http://localhost:3001';

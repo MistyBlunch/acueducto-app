@@ -26,7 +26,7 @@ module.exports = {
   coverageReporters: ['text-summary', 'lcov', 'html'],
   
   // Module resolution
-  moduleNameMapping: pathsToModuleNameMapper(compilerOptions.paths, {
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
     prefix: '<rootDir>/',
   }),
   

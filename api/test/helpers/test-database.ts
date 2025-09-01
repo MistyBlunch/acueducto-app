@@ -1,15 +1,8 @@
 import { PrismaClient } from '@prisma/test-client';
-import { execSync } from 'child_process';
-import { join } from 'path';
 
 let prismaClient: PrismaClient;
 
 export async function setupTestDatabase(): Promise<PrismaClient> {
-  // Generate test client from schema-test.prisma
-  execSync('npx prisma generate --schema=prisma/schema-test.prisma', {
-    stdio: 'inherit',
-  });
-  
   // Create new client instance
   prismaClient = new PrismaClient({
     log: process.env.NODE_ENV === 'test-debug' ? ['query', 'info', 'warn', 'error'] : [],
@@ -17,7 +10,7 @@ export async function setupTestDatabase(): Promise<PrismaClient> {
 
   await prismaClient.$connect();
   
-  // Run migrations for SQLite
+  // Create table structure for SQLite
   await prismaClient.$executeRaw`
     CREATE TABLE IF NOT EXISTS products (
       id TEXT PRIMARY KEY,

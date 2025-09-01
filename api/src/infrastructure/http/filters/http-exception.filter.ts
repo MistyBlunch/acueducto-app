@@ -31,7 +31,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const errorResponse = this.buildErrorResponse(exception, request);
     
-    // Log error with appropriate level
     this.logError(exception, errorResponse, request);
 
     response.status(errorResponse.statusCode).json(errorResponse);
@@ -42,7 +41,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const path = request.url;
     const requestId = request.headers['x-request-id'] as string;
 
-    // Handle Domain Errors (Business Logic)
     if (exception instanceof DomainError) {
       return {
         statusCode: exception.statusCode,
@@ -55,7 +53,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       };
     }
 
-    // Handle Zod Validation Errors
     if (exception instanceof ZodError) {
       const validationErrors = exception.errors.map(err => ({
         field: err.path.join('.'),
@@ -74,7 +71,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       };
     }
 
-    // Handle NestJS HTTP Exceptions
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
@@ -97,12 +93,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
       };
     }
 
-    // Handle Database/Prisma Errors
     if (this.isDatabaseError(exception)) {
       return this.handleDatabaseError(exception as any, timestamp, path, requestId);
     }
-
-    // Handle Generic Errors
     const error = exception as Error;
     return {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -132,7 +125,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     path: string, 
     requestId?: string
   ): ErrorResponse {
-    // Map common database errors to appropriate HTTP status codes
     if (error.message.includes('Unique constraint')) {
       return {
         statusCode: HttpStatus.CONFLICT,
@@ -188,20 +180,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
     };
 
     if (errorResponse.statusCode >= 500) {
-      // Internal server errors
       this.logger.error(
         `${errorResponse.error}: ${errorResponse.message}`,
         exception instanceof Error ? exception.stack : undefined,
         JSON.stringify(logContext),
       );
     } else if (errorResponse.statusCode >= 400) {
-      // Client errors
       this.logger.warn(
         `${errorResponse.error}: ${errorResponse.message}`,
         JSON.stringify(logContext),
       );
     } else {
-      // Other errors (shouldn't happen, but just in case)
       this.logger.log(
         `${errorResponse.error}: ${errorResponse.message}`,
         JSON.stringify(logContext),

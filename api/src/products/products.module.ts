@@ -10,8 +10,6 @@ import { PalindromeDiscountCalculator } from '../infrastructure/discount/palindr
 import { DiscountCalculatorFactoryImpl } from '../infrastructure/discount/discount-calculator-factory'
 import { ExactMatchSearchStrategy } from '../infrastructure/search-strategies/exact-match-strategy'
 import { SearchStrategyFactoryImpl } from '../infrastructure/search-strategies/search-strategy-factory'
-
-// Import symbols
 import { PRODUCT_READER } from '../core/interfaces/product-reader.interface'
 import { PRODUCT_WRITER } from '../core/interfaces/product-writer.interface'
 import { PALINDROME_DETECTOR } from '../core/interfaces/palindrome-detector.interface'
@@ -23,10 +21,8 @@ import { SEARCH_STRATEGY_FACTORY } from '../core/interfaces/search-strategy.inte
   imports: [],
   controllers: [ProductController],
   providers: [
-    // Infrastructure services
     PrismaService,
     
-    // Repository implementations
     {
       provide: PRODUCT_READER,
       useClass: PrismaProductReader,
@@ -36,33 +32,28 @@ import { SEARCH_STRATEGY_FACTORY } from '../core/interfaces/search-strategy.inte
       useClass: PrismaProductWriter,
     },
     
-    // Domain services
     {
       provide: PALINDROME_DETECTOR,
       useClass: PalindromeDetectorService,
     },
     
-    // Mappers
     {
       provide: PRODUCT_RESPONSE_MAPPER,
       useClass: ProductResponseMapperImpl,
     },
     
-    // Discount system
     PalindromeDiscountCalculator,
     {
       provide: DISCOUNT_CALCULATOR_FACTORY,
       useClass: DiscountCalculatorFactoryImpl,
     },
     
-    // Search system
     ExactMatchSearchStrategy,
     {
       provide: SEARCH_STRATEGY_FACTORY,
       useClass: SearchStrategyFactoryImpl,
     },
     
-    // Use cases
     SearchProductsUseCase,
   ],
   exports: [

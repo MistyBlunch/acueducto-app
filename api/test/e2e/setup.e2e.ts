@@ -1,7 +1,17 @@
+// Set test environment variables before importing modules
+process.env.NODE_ENV = 'test';
+process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
+process.env.LOG_LEVEL = 'warn';
+process.env.LOG_PRETTY = 'false';
+process.env.PORT = '3001';
+process.env.WEB_ORIGIN = 'http://localhost:3000';
+process.env.JWT_SECRET = 'test-secret-key-for-testing-only-very-long-string';
+
 import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { setupTestDatabase, cleanupTestDatabase } from '../helpers/test-database';
+import { setupTestDatabase, cleanupTestDatabase, getTestPrismaClient } from '../helpers/test-database';
+import { PrismaService } from '../../src/infrastructure/database/prisma.service';
 import { AppModule } from '../../src/app.module';
 import { HttpExceptionFilter } from '../../src/infrastructure/http/filters/http-exception.filter';
 
@@ -9,7 +19,7 @@ let app: INestApplication;
 
 export async function setupE2EApp(): Promise<INestApplication> {
   // Setup test database
-  await setupTestDatabase();
+  const testPrismaClient = await setupTestDatabase();
 
   // Create testing module
   const moduleFixture = await Test.createTestingModule({
@@ -20,10 +30,12 @@ export async function setupE2EApp(): Promise<INestApplication> {
       get: jest.fn((key: string) => {
         const config: Record<string, any> = {
           NODE_ENV: 'test',
+          DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
           PORT: 3001,
           WEB_ORIGIN: 'http://localhost:3000',
-          LOG_LEVEL: 'silent',
+          LOG_LEVEL: 'warn',
           LOG_PRETTY: false,
+          JWT_SECRET: 'test-secret-key-for-testing-only-very-long-string',
           SWAGGER_PATH: 'api/docs',
           SWAGGER_TITLE: 'Test API',
           SWAGGER_DESCRIPTION: 'Test API',
@@ -32,6 +44,8 @@ export async function setupE2EApp(): Promise<INestApplication> {
         return config[key];
       }),
     })
+    .overrideProvider(PrismaService)
+    .useValue(testPrismaClient)
     .compile();
 
   app = moduleFixture.createNestApplication();

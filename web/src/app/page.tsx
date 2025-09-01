@@ -1,11 +1,10 @@
-'use client'
+'use client';
 
-import { ProductSearch } from '@/components/product-search'
+import { ProductSearch } from '@/components/product-search';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <header className="border-b bg-white px-4 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-end">
@@ -16,14 +15,12 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Busca acá todos los productos de nuestra tienda
           </h2>
-          
-          {/* Palindrome Message */}
+
           <div className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200 rounded-full px-6 py-3 mb-6">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
             <span className="text-sm font-medium text-purple-800">
@@ -34,9 +31,9 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        
+
         <ProductSearch pageSize={12} />
       </main>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import { Search } from 'lucide-react'
+import { Search } from 'lucide-react';
 
 interface EmptyStateProps {
-  query?: string
+  query?: string;
 }
 
 export function EmptyState({ query }: EmptyStateProps) {
@@ -10,7 +10,7 @@ export function EmptyState({ query }: EmptyStateProps) {
       <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
         <Search className="w-8 h-8 text-muted-foreground" />
       </div>
-      
+
       {query ? (
         <>
           <h3 className="text-xl font-semibold mb-2">
@@ -24,7 +24,10 @@ export function EmptyState({ query }: EmptyStateProps) {
             <ul className="list-disc list-inside space-y-1">
               <li>Términos más generales</li>
               <li>Verificar la ortografía</li>
-              <li>Palabras palíndromas para obtener descuentos (ej: "ana", "oso", "radar")</li>
+              <li>
+                Palabras palíndromas para obtener descuentos (ej: "ana", "oso",
+                "radar")
+              </li>
             </ul>
           </div>
         </>
@@ -38,12 +41,12 @@ export function EmptyState({ query }: EmptyStateProps) {
           </p>
           <div className="mt-4 p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg">
             <p className="text-sm text-primary font-medium">
-              🎯 ¡Tip especial! Busca palabras palíndromas (como "ana", "oso", "radar") 
-              para obtener un 50% de descuento automático.
+              🎯 ¡Tip especial! Busca palabras palíndromas (como "ana", "oso",
+              "radar") para obtener un 50% de descuento automático.
             </p>
           </div>
         </>
       )}
     </div>
-  )
+  );
 }

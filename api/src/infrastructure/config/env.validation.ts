@@ -32,14 +32,15 @@ export const envSchema = z.object({
   DATABASE_USER: z.string().min(1, 'DATABASE_USER is required'),
   DATABASE_PASSWORD: z.string().min(1, 'DATABASE_PASSWORD is required'),
 
-  // CORS
+  // CORS - Now optional since we allow all origins
   WEB_ORIGIN: z
     .string()
     .url()
     .refine(url => url.startsWith('http'), {
       message: 'WEB_ORIGIN must be a valid HTTP/HTTPS URL',
     })
-    .default('http://localhost:3000'),
+    .default('http://localhost:3000')
+    .optional(),
   
   // Legacy support for CORS_ORIGIN (fallback)
   CORS_ORIGIN: z.string().optional(),

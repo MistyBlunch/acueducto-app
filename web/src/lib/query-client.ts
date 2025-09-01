@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -8,21 +8,21 @@ export const queryClient = new QueryClient({
       retry: (failureCount, error) => {
         // Don't retry on 4xx errors
         if (error instanceof Error && 'statusCode' in error) {
-          const statusCode = (error as any).statusCode
+          const statusCode = (error as any).statusCode;
           if (statusCode >= 400 && statusCode < 500) {
-            return false
+            return false;
           }
         }
-        return failureCount < 3
+        return failureCount < 3;
       },
       refetchOnWindowFocus: false,
     },
   },
-})
+});
 
 // Query keys factory
 export const queryKeys = {
   all: ['products'] as const,
-  search: (params: { query?: string; page?: number; pageSize?: number }) => 
+  search: (params: { query?: string; page?: number; pageSize?: number }) =>
     [...queryKeys.all, 'search', params] as const,
-}
+};

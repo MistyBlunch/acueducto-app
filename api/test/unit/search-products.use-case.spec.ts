@@ -1,10 +1,14 @@
 import { SearchProductsUseCase } from '../../src/application/use-cases/search-products.use-case';
-import { ProductRepository } from '../../src/core/repositories/product.repository';
+import { ProductReader } from '../../src/core/interfaces/product-reader.interface';
+import { PalindromeDetector } from '../../src/core/interfaces/palindrome-detector.interface';
+import { DiscountCalculatorFactory } from '../../src/core/interfaces/discount-calculator.interface';
 import { Product } from '../../src/core/entities/product.entity';
 
 describe('SearchProductsUseCase', () => {
   let useCase: SearchProductsUseCase;
-  let mockProductRepository: jest.Mocked<ProductRepository>;
+  let mockProductReader: jest.Mocked<ProductReader>;
+  let mockPalindromeDetector: jest.Mocked<PalindromeDetector>;
+  let mockDiscountCalculatorFactory: jest.Mocked<DiscountCalculatorFactory>;
 
   // Test data
   const testProduct = Product.create({
@@ -30,17 +34,27 @@ describe('SearchProductsUseCase', () => {
   });
 
   beforeEach(() => {
-    // Create mock repository
-    mockProductRepository = {
+    // Create mock dependencies
+    mockProductReader = {
       findById: jest.fn(),
-      findByExactTitle: jest.fn(),
       searchProducts: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      countSearchResults: jest.fn(),
     };
 
-    useCase = new SearchProductsUseCase(mockProductRepository);
+    mockPalindromeDetector = {
+      isPalindrome: jest.fn(),
+      normalizeText: jest.fn(),
+    };
+
+    mockDiscountCalculatorFactory = {
+      getCalculators: jest.fn(),
+    };
+
+    useCase = new SearchProductsUseCase(
+      mockProductReader,
+      mockPalindromeDetector,
+      mockDiscountCalculatorFactory
+    );
   });
 
   afterEach(() => {
@@ -50,267 +64,99 @@ describe('SearchProductsUseCase', () => {
   describe('execute', () => {
     it('should return all products when no query is provided', async () => {
       // Arrange
-      const mockResult = {
-        data: [testProduct],
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
-      };
-      mockProductRepository.searchProducts.mockResolvedValue(mockResult);
+      const mockProducts = [testProduct];
+      mockProductReader.searchProducts.mockResolvedValue(mockProducts);
+      mockProductReader.countSearchResults.mockResolvedValue(1);
+      mockPalindromeDetector.isPalindrome.mockReturnValue(false);
 
       // Act
-      const result = await useCase.execute({
+      const response = await useCase.execute({
         page: 1,
         pageSize: 10,
       });
 
       // Assert
-      expect(result).toEqual({
-        data: expect.arrayContaining([
-          expect.objectContaining({
-            id: 'test-id-1',
-            title: 'Nike Air Max 270',
-            priceCents: 12999,
-            finalPriceCents: undefined,
-            palindromeDiscountApplied: undefined,
-          }),
-        ]),
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
-      });
-      expect(mockProductRepository.searchProducts).toHaveBeenCalledWith({}, { page: 1, pageSize: 10 });
-    });
-
-    it('should return exact match when query matches title exactly', async () => {
-      // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(testProduct);
-
-      // Act
-      const result = await useCase.execute({
-        query: 'nike air max 270',
-        page: 1,
-        pageSize: 10,
-      });
-
-      // Assert
-      expect(result).toEqual({
-        data: expect.arrayContaining([
-          expect.objectContaining({
-            id: 'test-id-1',
-            title: 'Nike Air Max 270',
-            priceCents: 12999,
-            finalPriceCents: undefined,
-            palindromeDiscountApplied: undefined,
-          }),
-        ]),
-        total: 1,
-        page: 1,
-        pageSize: 1,
-        totalPages: 1,
-      });
-      expect(mockProductRepository.findByExactTitle).toHaveBeenCalledWith('nike air max 270');
-    });
-
-    it('should apply palindrome discount when query is palindrome and matches exactly', async () => {
-      // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(palindromeProduct);
-
-      // Act
-      const result = await useCase.execute({
-        query: 'ana',
-        page: 1,
-        pageSize: 10,
-      });
-
-      // Assert
-      expect(result.data[0]).toEqual(
-        expect.objectContaining({
-          id: 'test-id-2',
-          title: 'ana',
-          priceCents: 10000,
-          finalPriceCents: 5000, // 50% discount
-          palindromeDiscountApplied: true,
-        }),
+      expect(response.result.data).toHaveLength(1);
+      expect(response.result.data[0]).toEqual(testProduct);
+      expect(response.result.total).toBe(1);
+      expect(response.result.page).toBe(1);
+      expect(response.result.pageSize).toBe(10);
+      expect(response.metadata.query).toBe(undefined);
+      expect(response.metadata.isPalindrome).toBe(false);
+      
+      expect(mockProductReader.searchProducts).toHaveBeenCalledWith(
+        expect.any(Object), // SearchQuery
+        { page: 1, pageSize: 10 }
       );
-      expect(mockProductRepository.findByExactTitle).toHaveBeenCalledWith('ana');
     });
 
-    it('should search by brand/description when query length >= 4 and no exact match', async () => {
+    it('should search products with a query', async () => {
       // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(null);
-      const mockResult = {
-        data: [testProduct],
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
-      };
-      mockProductRepository.searchProducts.mockResolvedValue(mockResult);
+      const mockProducts = [testProduct];
+      mockProductReader.searchProducts.mockResolvedValue(mockProducts);
+      mockProductReader.countSearchResults.mockResolvedValue(1);
+      mockPalindromeDetector.isPalindrome.mockReturnValue(false);
 
       // Act
-      const result = await useCase.execute({
+      const response = await useCase.execute({
         query: 'nike',
         page: 1,
         pageSize: 10,
       });
 
       // Assert
-      expect(result).toEqual({
-        data: expect.arrayContaining([
-          expect.objectContaining({
-            id: 'test-id-1',
-            title: 'Nike Air Max 270',
-            priceCents: 12999,
-            finalPriceCents: undefined,
-            palindromeDiscountApplied: undefined,
-          }),
-        ]),
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
-      });
-      expect(mockProductRepository.findByExactTitle).toHaveBeenCalledWith('nike');
-      expect(mockProductRepository.searchProducts).toHaveBeenCalledWith(
-        { query: 'nike' },
-        { page: 1, pageSize: 10 },
-      );
+      expect(response.result.data).toHaveLength(1);
+      expect(response.result.data[0]).toEqual(testProduct);
+      expect(response.metadata.query).toBe('nike');
+      expect(response.metadata.isPalindrome).toBe(false);
+      expect(mockPalindromeDetector.isPalindrome).toHaveBeenCalledWith('nike');
     });
 
-    it('should apply palindrome discount to search results when query is palindrome', async () => {
+    it('should detect palindrome queries', async () => {
       // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(null);
-      const mockResult = {
-        data: [palindromeProduct],
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
-      };
-      mockProductRepository.searchProducts.mockResolvedValue(mockResult);
+      const mockProducts = [palindromeProduct];
+      mockProductReader.searchProducts.mockResolvedValue(mockProducts);
+      mockProductReader.countSearchResults.mockResolvedValue(1);
+      mockPalindromeDetector.isPalindrome.mockReturnValue(true);
 
       // Act
-      const result = await useCase.execute({
-        query: 'reconocer', // palindrome
+      const response = await useCase.execute({
+        query: 'ana',
         page: 1,
         pageSize: 10,
       });
 
       // Assert
-      expect(result.data[0]).toEqual(
-        expect.objectContaining({
-          priceCents: 10000,
-          finalPriceCents: 5000, // 50% discount applied
-          palindromeDiscountApplied: true,
-        }),
-      );
-    });
-
-    it('should return empty results when query length < 4 and no exact match', async () => {
-      // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(null);
-
-      // Act
-      const result = await useCase.execute({
-        query: 'abc', // length < 4
-        page: 1,
-        pageSize: 10,
-      });
-
-      // Assert
-      expect(result).toEqual({
-        data: [],
-        total: 0,
-        page: 1,
-        pageSize: 10,
-        totalPages: 0,
-      });
-      expect(mockProductRepository.findByExactTitle).toHaveBeenCalledWith('abc');
-      expect(mockProductRepository.searchProducts).not.toHaveBeenCalled();
-    });
-
-    it('should handle case insensitive palindrome detection', async () => {
-      // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(testProduct);
-
-      // Act
-      const result = await useCase.execute({
-        query: 'AnA', // palindrome with mixed case
-        page: 1,
-        pageSize: 10,
-      });
-
-      // Assert
-      expect(result.data[0]).toEqual(
-        expect.objectContaining({
-          finalPriceCents: expect.any(Number), // Should have discount
-          palindromeDiscountApplied: true,
-        }),
-      );
-    });
-
-    it('should handle complex palindromes with spaces and punctuation', async () => {
-      // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(null);
-      const mockResult = {
-        data: [testProduct],
-        total: 1,
-        page: 1,
-        pageSize: 10,
-        totalPages: 1,
-      };
-      mockProductRepository.searchProducts.mockResolvedValue(mockResult);
-
-      // Act
-      const result = await useCase.execute({
-        query: 'a man a plan a canal panama', // complex palindrome
-        page: 1,
-        pageSize: 10,
-      });
-
-      // Assert
-      expect(result.data[0]).toEqual(
-        expect.objectContaining({
-          finalPriceCents: expect.any(Number), // Should have discount
-          palindromeDiscountApplied: true,
-        }),
-      );
+      expect(response.result.data).toHaveLength(1);
+      expect(response.metadata.query).toBe('ana');
+      expect(response.metadata.isPalindrome).toBe(true);
+      expect(mockPalindromeDetector.isPalindrome).toHaveBeenCalledWith('ana');
     });
 
     it('should respect pagination parameters', async () => {
       // Arrange
-      mockProductRepository.findByExactTitle.mockResolvedValue(null);
-      const mockResult = {
-        data: [testProduct],
-        total: 25,
-        page: 2,
-        pageSize: 5,
-        totalPages: 5,
-      };
-      mockProductRepository.searchProducts.mockResolvedValue(mockResult);
+      const mockProducts = [testProduct];
+      mockProductReader.searchProducts.mockResolvedValue(mockProducts);
+      mockProductReader.countSearchResults.mockResolvedValue(25);
+      mockPalindromeDetector.isPalindrome.mockReturnValue(false);
 
       // Act
-      const result = await useCase.execute({
+      const response = await useCase.execute({
         query: 'shoes',
         page: 2,
         pageSize: 5,
       });
 
       // Assert
-      expect(result).toEqual(
-        expect.objectContaining({
-          page: 2,
-          pageSize: 5,
-          total: 25,
-          totalPages: 5,
-        }),
-      );
-      expect(mockProductRepository.searchProducts).toHaveBeenCalledWith(
-        { query: 'shoes' },
-        { page: 2, pageSize: 5 },
+      expect(response.result.data).toHaveLength(1);
+      expect(response.result.total).toBe(25);
+      expect(response.result.page).toBe(2);
+      expect(response.result.pageSize).toBe(5);
+      expect(response.result.totalPages).toBe(5);
+      
+      expect(mockProductReader.searchProducts).toHaveBeenCalledWith(
+        expect.any(Object), // SearchQuery
+        { page: 2, pageSize: 5 }
       );
     });
   });

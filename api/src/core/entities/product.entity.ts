@@ -17,7 +17,6 @@ export class Product {
     return new Product(props);
   }
 
-  // Getters
   public get id(): string {
     return this.props.id;
   }
@@ -53,8 +52,6 @@ export class Product {
   public get updatedAt(): Date | undefined {
     return this.props.updatedAt;
   }
-
-  // Business logic methods
   public isInStock(): boolean {
     return this.props.stock > 0;
   }

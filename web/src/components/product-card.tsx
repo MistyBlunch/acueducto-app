@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Price } from '@/components/price'
-import { Product } from '@/types/api'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Price } from '@/components/price';
+import { type Product } from '@/types/api';
 
 interface ProductCardProps {
-  product: Product
+  product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -17,10 +17,10 @@ export function ProductCard({ product }: ProductCardProps) {
     currency,
     stock,
     palindromeDiscountApplied,
-  } = product
+  } = product;
 
-  const isOutOfStock = stock === 0
-  const hasDiscount = finalPriceCents && finalPriceCents < priceCents
+  const isOutOfStock = stock === 0;
+  const hasDiscount = finalPriceCents && finalPriceCents < priceCents;
 
   return (
     <Card className="h-full transition-all hover:shadow-lg">
@@ -47,12 +47,12 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
           {description}
         </p>
-        
+
         <div className="flex justify-between items-end">
           <Price
             priceCents={priceCents}
@@ -60,7 +60,7 @@ export function ProductCard({ product }: ProductCardProps) {
             currency={currency}
             palindromeDiscountApplied={palindromeDiscountApplied}
           />
-          
+
           {stock > 0 && (
             <div className="text-right">
               <div className="text-xs text-muted-foreground">Stock</div>
@@ -70,5 +70,5 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -32,25 +32,22 @@ describe('SearchQuery', () => {
     });
   });
 
-  describe('isPalindrome', () => {
-    it('should delegate to PalindromeService and return true for palindromes', () => {
-      const query = SearchQuery.create('ana');
-      expect(query.isPalindrome()).toBe(true);
+  describe('getLength', () => {
+    it('should return the length of the query', () => {
+      const query = SearchQuery.create('nike');
+      expect(query.getLength()).toBe(4);
     });
 
-    it('should delegate to PalindromeService and return false for non-palindromes', () => {
-      const query = SearchQuery.create('acueducto');
-      expect(query.isPalindrome()).toBe(false);
-    });
-
-    it('should handle empty query', () => {
+    it('should return 0 for empty query', () => {
       const query = SearchQuery.create('');
-      expect(query.isPalindrome()).toBe(false);
+      expect(query.getLength()).toBe(0);
     });
+  });
 
-    it('should handle single character', () => {
-      const query = SearchQuery.create('a');
-      expect(query.isPalindrome()).toBe(false);
+  describe('toString', () => {
+    it('should return the query value', () => {
+      const query = SearchQuery.create('nike');
+      expect(query.toString()).toBe('nike');
     });
   });
 
